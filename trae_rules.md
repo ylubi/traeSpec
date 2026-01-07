@@ -5,7 +5,7 @@
 + 第二，必须根据 design_spec.md 中的规范，根据 requirements.md 的内容 来生成 design.md。下一个步骤前必须有用户确认。
 + 第三，必须根据 tasks_spec.md 中的规范，根据 requirements.md、design.md 的内容 来生成 tasks.md。下一个步骤前必须有用户确认。
 
-+ .trae_spec 目录中的每个子目录下，只有 requirements.md、design.md、tasks.md 这三个文件。
++ .trae_spec 目录中的每个子目录下，只有 requirements.md、design.md、tasks.md 这三个文件，不存在 requirements_spec.md、design_spec.md、tasks_spec.md 这三个文件。
 
 # spec 开发规范
 
