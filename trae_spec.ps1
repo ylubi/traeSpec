@@ -120,22 +120,51 @@ if ($Path) {
     else {
         # 检查目标文件是否存在
         if (Test-Path $TargetFile) {
-            Write-Host "[INFO] 目标文件已存在，追加内容到: $TargetFile" -ForegroundColor Yellow
+            Write-Host "[INFO] 目标文件已存在，智能更新内容: $TargetFile" -ForegroundColor Yellow
             try {
-                Add-Content -Path $TargetFile -Value ""
-                Add-Content -Path $TargetFile -Value "# 以下内容来自 trae_rules.md"
-                Add-Content -Path $TargetFile -Value ""
-                Get-Content -Path $SourceFile | Add-Content -Path $TargetFile
-                Write-Host "[INFO] 已追加内容到 $TargetFile" -ForegroundColor Green
+                # 读取目标文件内容
+                $targetContent = Get-Content -Path $TargetFile -Raw
+                $sourceContent = Get-Content -Path $SourceFile -Raw
+                
+                # 定义标记
+                $startMarker = "<!-- trae_rules.md start -->"
+                $endMarker = "<!-- trae_rules.md end -->"
+                
+                # 检查是否已存在标记
+                if ($targetContent -match [regex]::Escape($startMarker) -and $targetContent -match [regex]::Escape($endMarker)) {
+                    # 替换标记之间的内容
+                    $pattern = "(?s)$([regex]::Escape($startMarker)).*?$([regex]::Escape($endMarker))"
+                    $newContent = $startMarker + "`n" + $sourceContent + "`n" + $endMarker
+                    $targetContent = $targetContent -replace $pattern, $newContent
+                    
+                    Set-Content -Path $TargetFile -Value $targetContent
+                    Write-Host "[INFO] 已替换标记内容到 $TargetFile" -ForegroundColor Green
+                }
+                else {
+                    # 如果不存在标记，则追加内容
+                    Add-Content -Path $TargetFile -Value ""
+                    Add-Content -Path $TargetFile -Value "# 以下内容来自 trae_rules.md"
+                    Add-Content -Path $TargetFile -Value ""
+                    Add-Content -Path $TargetFile -Value $startMarker
+                    Add-Content -Path $TargetFile -Value $sourceContent
+                    Add-Content -Path $TargetFile -Value $endMarker
+                    Write-Host "[INFO] 已追加内容到 $TargetFile" -ForegroundColor Green
+                }
             }
             catch {
-                Write-Host "错误: 无法追加内容到 $TargetFile" -ForegroundColor Red
+                Write-Host "错误: 无法更新内容到 $TargetFile" -ForegroundColor Red
             }
         }
         else {
             try {
-                Copy-Item -Path $SourceFile -Destination $TargetFile -Force
-                Write-Host "[INFO] 复制文件: $SourceFile -> $TargetFile" -ForegroundColor Green
+                # 第一次复制时，添加标记
+                $sourceContent = Get-Content -Path $SourceFile -Raw
+                $startMarker = "<!-- trae_rules.md start -->"
+                $endMarker = "<!-- trae_rules.md end -->"
+                $markedContent = $startMarker + "`n" + $sourceContent + "`n" + $endMarker
+                
+                Set-Content -Path $TargetFile -Value $markedContent
+                Write-Host "[INFO] 复制文件并添加标记: $SourceFile -> $TargetFile" -ForegroundColor Green
             }
             catch {
                 Write-Host "错误: 无法复制文件 $SourceFile -> $TargetFile" -ForegroundColor Red
@@ -206,22 +235,51 @@ if ($All) {
     else {
         # 检查目标文件是否存在
         if (Test-Path $TargetFile) {
-            Write-Host "[INFO] 目标文件已存在，追加内容到: $TargetFile" -ForegroundColor Yellow
+            Write-Host "[INFO] 目标文件已存在，智能更新内容: $TargetFile" -ForegroundColor Yellow
             try {
-                Add-Content -Path $TargetFile -Value ""
-                Add-Content -Path $TargetFile -Value "# 以下内容来自 trae_rules.md"
-                Add-Content -Path $TargetFile -Value ""
-                Get-Content -Path $SourceFile | Add-Content -Path $TargetFile
-                Write-Host "[INFO] 已追加内容到 $TargetFile" -ForegroundColor Green
+                # 读取目标文件内容
+                $targetContent = Get-Content -Path $TargetFile -Raw
+                $sourceContent = Get-Content -Path $SourceFile -Raw
+                
+                # 定义标记
+                $startMarker = "<!-- trae_rules.md start -->"
+                $endMarker = "<!-- trae_rules.md end -->"
+                
+                # 检查是否已存在标记
+                if ($targetContent -match [regex]::Escape($startMarker) -and $targetContent -match [regex]::Escape($endMarker)) {
+                    # 替换标记之间的内容
+                    $pattern = "(?s)$([regex]::Escape($startMarker)).*?$([regex]::Escape($endMarker))"
+                    $newContent = $startMarker + "`n" + $sourceContent + "`n" + $endMarker
+                    $targetContent = $targetContent -replace $pattern, $newContent
+                    
+                    Set-Content -Path $TargetFile -Value $targetContent
+                    Write-Host "[INFO] 已替换标记内容到 $TargetFile" -ForegroundColor Green
+                }
+                else {
+                    # 如果不存在标记，则追加内容
+                    Add-Content -Path $TargetFile -Value ""
+                    Add-Content -Path $TargetFile -Value "# 以下内容来自 trae_rules.md"
+                    Add-Content -Path $TargetFile -Value ""
+                    Add-Content -Path $TargetFile -Value $startMarker
+                    Add-Content -Path $TargetFile -Value $sourceContent
+                    Add-Content -Path $TargetFile -Value $endMarker
+                    Write-Host "[INFO] 已追加内容到 $TargetFile" -ForegroundColor Green
+                }
             }
             catch {
-                Write-Host "错误: 无法追加内容到 $TargetFile" -ForegroundColor Red
+                Write-Host "错误: 无法更新内容到 $TargetFile" -ForegroundColor Red
             }
         }
         else {
             try {
-                Copy-Item -Path $SourceFile -Destination $TargetFile -Force
-                Write-Host "[INFO] 复制文件: $SourceFile -> $TargetFile" -ForegroundColor Green
+                # 第一次复制时，添加标记
+                $sourceContent = Get-Content -Path $SourceFile -Raw
+                $startMarker = "<!-- trae_rules.md start -->"
+                $endMarker = "<!-- trae_rules.md end -->"
+                $markedContent = $startMarker + "`n" + $sourceContent + "`n" + $endMarker
+                
+                Set-Content -Path $TargetFile -Value $markedContent
+                Write-Host "[INFO] 复制文件并添加标记: $SourceFile -> $TargetFile" -ForegroundColor Green
             }
             catch {
                 Write-Host "错误: 无法复制文件 $SourceFile -> $TargetFile" -ForegroundColor Red

@@ -17,6 +17,65 @@ PATH_ARG=""
 ALL=false
 CN=false
 
+# ==========================================
+# 辅助函数
+# ==========================================
+
+process_rules_file() {
+    local src="$1"
+    local tgt="$2"
+    local start_marker="<!-- trae_rules.md start -->"
+    local end_marker="<!-- trae_rules.md end -->"
+
+    if [[ ! -f "$tgt" ]]; then
+        # Create new with markers
+        echo -e "${GREEN}[INFO] Creating file with markers: $src -> $tgt${NC}"
+        echo "$start_marker" > "$tgt"
+        cat "$src" >> "$tgt"
+        echo "" >> "$tgt"
+        echo "$end_marker" >> "$tgt"
+        return 0
+    fi
+
+    # Check markers
+    if grep -Fq "$start_marker" "$tgt" && grep -Fq "$end_marker" "$tgt"; then
+        echo -e "${GREEN}[INFO] Target file already exists, updating content between markers: $tgt${NC}"
+        local temp_file="${tgt}.tmp"
+        
+        # Use awk to replace
+        awk -v start="$start_marker" -v end="$end_marker" -v src_file="$src" '
+        BEGIN { copying = 1 }
+        index($0, start) > 0 {
+            print $0
+            while ((getline line < src_file) > 0) {
+                print line
+            }
+            close(src_file)
+            print ""
+            copying = 0
+            next
+        }
+        index($0, end) > 0 {
+            copying = 1
+            print $0
+            next
+        }
+        copying { print }
+        ' "$tgt" > "$temp_file"
+
+        mv "$temp_file" "$tgt"
+        echo -e "${GREEN}[INFO] Updated content in $tgt${NC}"
+    else
+        echo -e "${YELLOW}[INFO] Target file already exists, appending content to: $tgt${NC}"
+        echo "" >> "$tgt"
+        echo "$start_marker" >> "$tgt"
+        cat "$src" >> "$tgt"
+        echo "" >> "$tgt"
+        echo "$end_marker" >> "$tgt"
+        echo -e "${GREEN}[INFO] Appended content to $tgt${NC}"
+    fi
+}
+
 # 检查参数
 if [ $# -eq 0 ]; then
     echo -e "${RED}错误: 缺少参数${NC}"
@@ -136,26 +195,7 @@ if [[ -n "$PATH_ARG" ]]; then
     if [[ ! -f "$SOURCE_FILE" ]]; then
         echo -e "${YELLOW}警告: 源文件不存在: $SOURCE_FILE${NC}"
     else
-        # 检查目标文件是否存在
-        if [[ -f "$TARGET_FILE" ]]; then
-            echo -e "${YELLOW}[INFO] 目标文件已存在，追加内容到: $TARGET_FILE${NC}"
-            echo "" >> "$TARGET_FILE"
-            echo "# 以下内容来自 trae_rules.md" >> "$TARGET_FILE"
-            echo "" >> "$TARGET_FILE"
-            cat "$SOURCE_FILE" >> "$TARGET_FILE"
-            if [[ $? -eq 0 ]]; then
-                echo -e "${GREEN}[INFO] 已追加内容到 $TARGET_FILE${NC}"
-            else
-                echo -e "${RED}错误: 无法追加内容到 $TARGET_FILE${NC}"
-            fi
-        else
-            cp "$SOURCE_FILE" "$TARGET_FILE"
-            if [[ $? -eq 0 ]]; then
-                echo -e "${GREEN}[INFO] 复制文件: $SOURCE_FILE -> $TARGET_FILE${NC}"
-            else
-                echo -e "${RED}错误: 无法复制文件 $SOURCE_FILE -> $TARGET_FILE${NC}"
-            fi
-        fi
+        process_rules_file "$SOURCE_FILE" "$TARGET_FILE"
     fi
     
     echo ""
@@ -217,26 +257,7 @@ if [[ "$ALL" == true ]]; then
     if [[ ! -f "$SOURCE_FILE" ]]; then
         echo -e "${YELLOW}警告: 源文件不存在: $SOURCE_FILE${NC}"
     else
-        # 检查目标文件是否存在
-        if [[ -f "$TARGET_FILE" ]]; then
-            echo -e "${YELLOW}[INFO] 目标文件已存在，追加内容到: $TARGET_FILE${NC}"
-            echo "" >> "$TARGET_FILE"
-            echo "# 以下内容来自 trae_rules.md" >> "$TARGET_FILE"
-            echo "" >> "$TARGET_FILE"
-            cat "$SOURCE_FILE" >> "$TARGET_FILE"
-            if [[ $? -eq 0 ]]; then
-                echo -e "${GREEN}[INFO] 已追加内容到 $TARGET_FILE${NC}"
-            else
-                echo -e "${RED}错误: 无法追加内容到 $TARGET_FILE${NC}"
-            fi
-        else
-            cp "$SOURCE_FILE" "$TARGET_FILE"
-            if [[ $? -eq 0 ]]; then
-                echo -e "${GREEN}[INFO] 复制文件: $SOURCE_FILE -> $TARGET_FILE${NC}"
-            else
-                echo -e "${RED}错误: 无法复制文件 $SOURCE_FILE -> $TARGET_FILE${NC}"
-            fi
-        fi
+        process_rules_file "$SOURCE_FILE" "$TARGET_FILE"
     fi
     
     echo ""

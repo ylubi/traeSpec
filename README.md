@@ -2,6 +2,25 @@
 
 TraeSpec 在 trae 中实现类似于 kiro 中的 spec 编程。
 
+## 更新日志
+
+- 2026-01-10 在脚本中增加了标签 ```<!-- trae_rules.md start -->```，方便后续版本更新时替换trae规则
+- 改版本修改，是为了方便之后的版本更新。
+- 改版本更新说明
+```
+# 使用说明
+# 也可以手动删除trae规则中相关的规则，或者修改添加标签
+# 后续 ./trae_spec.sh 命令或自动添加标签，自动替换标签内的规则
+# windows 使用 deal_old.ps1、deal_old.bat 命令处理
+
+# 处理之前的版本中的规则
+# 添加 <!-- trae_rules.md start -->、<!-- trae_rules.md end -->
+deal_old.sh --path <项目路径>  
+
+# 处理之前的版本中的规则，处理 ~/.trae、~/.trae-cn中的规则
+deal_old.sh --all 
+```
+
 ## 功能特性
 
 - 在 trae 中实现类似于 kiro 中的 spec 编程
