@@ -1,6 +1,6 @@
 # Requirements 文档规范
 
-## 注意事项
+## 必须遵守的规范
 
 - 注意 requirements.md 的文件结构，遵循下面的文档结构规范。
 

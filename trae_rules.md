@@ -1,9 +1,13 @@
-注意：如果收到是普通任务，则不需要执行spec 开发。
+注意：如果收到是普通任务，则不需要执行spec 开发。对于solo模式，如果是新对话，如果没有特别强调 spec 开发（没有spec 关键字），则不需要执行spec 开发。如果是老对话，则根据老对话的spec 开发流程执行。
+不需要spec开发，就直接跳过spec下面spec规范等，不用提示用户是否进行spec流程，包括 .trae_spec目录的 requirements.md、design.md、tasks.md 这三个文件。
 收到一个spec 任务时，必须按以下流程执行：
 
 + 第一，必须根据 requirements_spec.md 中的规范，来生成 requirements.md。下一个步骤前必须有用户确认。
 + 第二，必须根据 design_spec.md 中的规范，根据 requirements.md 的内容 来生成 design.md。下一个步骤前必须有用户确认。
 + 第三，必须根据 tasks_spec.md 中的规范，根据 requirements.md、design.md 的内容 来生成 tasks.md。下一个步骤前必须有用户确认。
++ 第四，必须在完成所有 tasks.md 中的任务开发后，在 项目目录 doc 目录下生成一个开发文档。记录本次spec开发完成的相关开发信息及相关任务、代码文档。
+
++ 如果用户明确不需要确认，或者用户明确直接开发，就直接跳过确认步骤。
 
 + .trae_spec 目录中的每个子目录下，只有 requirements.md、design.md、tasks.md 这三个文件，不存在 requirements_spec.md、design_spec.md、tasks_spec.md 这三个文件。
 
