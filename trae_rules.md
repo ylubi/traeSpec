@@ -8,7 +8,8 @@
 + 第三，必须先查看 requirements_spec.md 文件，强制严格遵守 requirements_spec.md 规范，生成 requirements.md。
 + 第四，必须先查看 design_spec.md 文件，强制严格遵守 design_spec.md 规范，根据 requirements.md 的内容 来生成 design.md。
 + 第五，必须先查看 tasks_spec.md 文件，强制严格遵守 tasks_spec.md 规范，根据 requirements.md、design.md 的内容 来生成 tasks.md。
-+ 第六，必须强制在完成所有 tasks.md 中的任务开发后，在 项目目录 doc 目录下生成一个开发文档。记录本次spec开发完成的相关开发信息及相关任务、代码文档。
++ 第六，开发过程中，必须根据 requirements.md、design.md、tasks.md 中的内容，来进行代码开发。
++ 第七，必须强制在完成所有 tasks.md 中的任务开发后，在 项目目录 doc 目录下生成一个开发文档。记录本次spec开发完成的相关开发信息及相关任务、代码文档。
 
 + spec 开发流程 必须严格等待用户确认，再进行下一步。
 + spec 开发流程 如果用户明确不需要确认，或者用户明确直接开发，就直接跳过确认步骤。
