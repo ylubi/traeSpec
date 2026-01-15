@@ -13,6 +13,7 @@ REM Initialize variables
 set "ProjectPath="
 set "All=false"
 set "Cn=false"
+set "Skill=false"
 set "ScriptDir=%~dp0"
 REM Remove trailing backslash if present
 if "%ScriptDir:~-1%"=="\" set "ScriptDir=%ScriptDir:~0,-1%"
@@ -56,6 +57,10 @@ if /i "%~1"=="--path" (
     set "Cn=true"
 ) else if /i "%~1"=="-Cn" (
     set "Cn=true"
+) else if /i "%~1"=="--skill" (
+    set "Skill=true"
+) else if /i "%~1"=="-Skill" (
+    set "Skill=true"
 ) else (
     echo Error: Unknown argument %~1
     echo.
@@ -99,6 +104,43 @@ if defined ProjectPath (
     if not exist "!ProjectPath!" (
         echo Error: Project path does not exist: !ProjectPath!
         exit /b 1
+    )
+
+    if "!Skill!"=="true" (
+        echo [INFO] Detected --skill argument, copying SKILL.md
+        
+        REM Create .trae/skills/spec directory
+        set "SkillDir=!ProjectPath!\.trae\skills\spec"
+        if not exist "!SkillDir!" (
+            mkdir "!SkillDir!" 2>nul
+            if errorlevel 1 (
+                echo Error: Cannot create directory !SkillDir!
+                exit /b 1
+            ) else (
+                echo [INFO] Created directory: !SkillDir!
+            )
+        )
+        
+        REM Copy SKILL.md
+        set "SourceFile=!ScriptDir!\skills\TraeSpec\SKILL.md"
+        set "TargetFile=!SkillDir!\SKILL.md"
+        
+        if not exist "!SourceFile!" (
+            echo Error: Source file does not exist: !SourceFile!
+            exit /b 1
+        )
+        
+        copy /Y "!SourceFile!" "!TargetFile!" >nul
+        if errorlevel 1 (
+            echo Error: Cannot copy file !SourceFile! -^> !TargetFile!
+            exit /b 1
+        ) else (
+            echo [INFO] Copied file: !SourceFile! -^> !TargetFile!
+        )
+        
+        echo.
+        echo Complete: SKILL.md processed to project path !ProjectPath!
+        exit /b 0
     )
     
     REM Create .trae/rules directory

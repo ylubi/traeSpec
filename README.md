@@ -4,6 +4,7 @@ TraeSpec 在 trae 中实现类似于 kiro 中的 spec 编程。
 
 ## 更新日志
 
+- 2026-01-16 新增 `--skill` 参数支持，用于将 SKILL.md 部署到项目的 `.trae/skills/spec` 目录。
 - 2026-01-10 在脚本中增加了标签 ```<!-- trae_rules.md start -->```，方便后续版本更新时替换trae规则
 - 改版本修改，是为了方便之后的版本更新。
 - 改版本更新说明
@@ -74,6 +75,7 @@ trae_spec.bat [参数]
 ### 脚本参数说明
 
 - `--path <项目路径>` 或 `-Path <项目路径>`：指定项目路径，用于在指定项目中创建规范文件
+- `--skill` 或 `-Skill`：与 --path 参数配合使用，仅将技能文件 SKILL.md 复制到项目目录（.trae/skills/spec），不处理规则文件
 - `--all` 或 `-All`：将规范文件复制到用户目录（~/.trae 或 ~/.trae-cn）
 - `--cn` 或 `-Cn`：与 --all 参数配合使用，将规范文件复制到中文用户目录（~/.trae-cn）
 
@@ -94,6 +96,11 @@ trae_spec.bat [参数]
 ./trae_spec.sh --all --cn
 ```
 
+#### 为项目部署 SKILL.md 技能文件
+```bash
+./trae_spec.sh --path /path/to/your/project --skill
+```
+
 #### 使用简写参数
 ```bash
 ./trae_spec.sh -Path /path/to/your/project
@@ -104,6 +111,7 @@ trae_spec.bat [参数]
 
 这些脚本的主要功能包括：
 - 将规范文件（requirements_spec.md, design_spec.md, tasks_spec.md）复制到指定项目或用户目录
-- 自动创建必要的目录结构（.trae/rules）
+- 支持部署 Trae Spec 技能文件（SKILL.md）到项目目录
+- 自动创建必要的目录结构（.trae/rules 或 .trae/skills/spec）
 - 特殊处理 trae_rules.md 文件（复制为 project_rules.md 或追加到现有文件）
 - 支持多平台参数格式（-- 和 - 前缀）

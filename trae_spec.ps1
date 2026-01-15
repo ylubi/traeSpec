@@ -1,33 +1,34 @@
-# trae_spec.ps1 - PowerShell 版本的 trae 规范文件管理脚本
-# 用法: .\trae_spec.ps1 --path <projectPath> 或 .\trae_spec.ps1 --all [--cn]
-# 也支持: .\trae_spec.ps1 -Path <projectPath> 或 .\trae_spec.ps1 -All [-Cn]
+# trae_spec.ps1 - PowerShell version of trae specification file management script
+# Usage: .\trae_spec.ps1 --path <projectPath> or .\trae_spec.ps1 --all [--cn]
+# Also supports: .\trae_spec.ps1 -Path <projectPath> or .\trae_spec.ps1 -All [-Cn]
 
-# 手动解析参数以支持 -- 和 - 前缀
+# Manual argument parsing to support -- and - prefixes
 $Path = $null
 $All = $false
 $Cn = $false
+$Skill = $false
 
-# 检查参数
+# Check arguments
 if ($args.Count -eq 0) {
-    Write-Host "错误: 缺少参数" -ForegroundColor Red
+    Write-Host "Error: Missing arguments" -ForegroundColor Red
     Write-Host ""
-    Write-Host "用法:" -ForegroundColor Cyan
+    Write-Host "Usage:" -ForegroundColor Cyan
     Write-Host "  .\trae_spec.ps1 --path <projectPath>" -ForegroundColor White
     Write-Host "  .\trae_spec.ps1 --all [--cn]" -ForegroundColor White
     Write-Host ""
     exit 1
 }
 
-# 解析参数
+# Parse arguments
 for ($i = 0; $i -lt $args.Count; $i++) {
     $arg = $args[$i]
     
     if ($arg -eq "--path" -or $arg -eq "-Path") {
         if ($i + 1 -lt $args.Count) {
             $Path = $args[$i + 1]
-            $i++  # 跳过下一个参数（路径值）
+            $i++  # Skip next argument (path value)
         } else {
-            Write-Host "错误: --path 参数需要项目路径" -ForegroundColor Red
+            Write-Host "Error: --path argument requires a project path" -ForegroundColor Red
             exit 1
         }
     }
@@ -37,22 +38,25 @@ for ($i = 0; $i -lt $args.Count; $i++) {
     elseif ($arg -eq "--cn" -or $arg -eq "-Cn") {
         $Cn = $true
     }
+    elseif ($arg -eq "--skill" -or $arg -eq "-Skill") {
+        $Skill = $true
+    }
 }
 
-# 定义需要处理的文件列表
+# Define list of files to process
 $SpecFiles = @("requirements_spec.md", "design_spec.md", "tasks_spec.md")
 $TraeRulesFile = "trae_rules.md"
 $ScriptDir = "c:\work\tools\traeSpec"
 
-Write-Host "[INFO] trae_spec.ps1 开始执行" -ForegroundColor Green
-Write-Host "[INFO] 参数: Path=$Path, All=$All, Cn=$Cn" -ForegroundColor Yellow
-Write-Host "[INFO] 当前目录: $PWD" -ForegroundColor Yellow
+Write-Host "[INFO] trae_spec.ps1 starts execution" -ForegroundColor Green
+Write-Host "[INFO] Arguments: Path=$Path, All=$All, Cn=$Cn, Skill=$Skill" -ForegroundColor Yellow
+Write-Host "[INFO] Current directory: $PWD" -ForegroundColor Yellow
 
-# 检查参数
+# Validate arguments
 if (-not $Path -and -not $All) {
-    Write-Host "错误: 缺少参数" -ForegroundColor Red
+    Write-Host "Error: Missing arguments" -ForegroundColor Red
     Write-Host ""
-    Write-Host "用法:" -ForegroundColor Cyan
+    Write-Host "Usage:" -ForegroundColor Cyan
     Write-Host "  .\trae_spec.ps1 --path <projectPath>" -ForegroundColor White
     Write-Host "  .\trae_spec.ps1 --all" -ForegroundColor White
     Write-Host ""
@@ -60,236 +64,275 @@ if (-not $Path -and -not $All) {
 }
 
 if ($Path -and $All) {
-    Write-Host "错误: 不能同时使用 --path 和 --all 参数" -ForegroundColor Red
+    Write-Host "Error: Cannot use --path and --all arguments together" -ForegroundColor Red
     exit 1
 }
 
-# 处理 --path 参数
+# Process --path argument
 if ($Path) {
-    Write-Host "[INFO] 检测到 --path 参数" -ForegroundColor Green
-    Write-Host "[INFO] 项目路径: $Path" -ForegroundColor Yellow
+    Write-Host "[INFO] Detected --path argument" -ForegroundColor Green
+    Write-Host "[INFO] Project path: $Path" -ForegroundColor Yellow
     
-    # 检查项目路径是否存在
+    # Check if project path exists
     if (-not (Test-Path $Path)) {
-        Write-Host "错误: 项目路径不存在: $Path" -ForegroundColor Red
+        Write-Host "Error: Project path does not exist: $Path" -ForegroundColor Red
         exit 1
     }
+
+    if ($Skill) {
+        Write-Host "[INFO] Detected --skill argument, copying SKILL.md" -ForegroundColor Green
+        
+        # Create .trae/skills/spec directory
+        $SkillDir = Join-Path $Path ".trae\skills\spec"
+        if (-not (Test-Path $SkillDir)) {
+            try {
+                New-Item -ItemType Directory -Path $SkillDir -Force | Out-Null
+                Write-Host "[INFO] Created directory: $SkillDir" -ForegroundColor Green
+            }
+            catch {
+                Write-Host "Error: Cannot create directory $SkillDir" -ForegroundColor Red
+                exit 1
+            }
+        }
+        
+        # Copy SKILL.md
+        $SourceFile = Join-Path $ScriptDir "skills\TraeSpec\SKILL.md"
+        $TargetFile = Join-Path $SkillDir "SKILL.md"
+        
+        if (-not (Test-Path $SourceFile)) {
+            Write-Host "Error: Source file does not exist: $SourceFile" -ForegroundColor Red
+            exit 1
+        }
+        
+        try {
+            Copy-Item -Path $SourceFile -Destination $TargetFile -Force
+            Write-Host "[INFO] Copied file: $SourceFile -> $TargetFile" -ForegroundColor Green
+        }
+        catch {
+            Write-Host "Error: Cannot copy file $SourceFile -> $TargetFile" -ForegroundColor Red
+            exit 1
+        }
+        
+        Write-Host ""
+        Write-Host "Complete: SKILL.md processed to project path $Path" -ForegroundColor Green
+        exit 0
+    }
     
-    # 创建 .trae/rules 目录
+    # Create .trae/rules directory
     $RulesDir = Join-Path $Path ".trae\rules"
     if (-not (Test-Path $RulesDir)) {
         try {
             New-Item -ItemType Directory -Path $RulesDir -Force | Out-Null
-            Write-Host "[INFO] 创建目录: $RulesDir" -ForegroundColor Green
+            Write-Host "[INFO] Created directory: $RulesDir" -ForegroundColor Green
         }
         catch {
-            Write-Host "错误: 无法创建目录 $RulesDir" -ForegroundColor Red
+            Write-Host "Error: Cannot create directory $RulesDir" -ForegroundColor Red
             exit 1
         }
     }
     
-    # 处理三个规范文件（直接覆盖）
+    # Process three spec files (direct copy)
     foreach ($File in $SpecFiles) {
         $SourceFile = Join-Path $ScriptDir $File
         $TargetFile = Join-Path $RulesDir $File
         
-        # 检查源文件是否存在
+        # Check if source file exists
         if (-not (Test-Path $SourceFile)) {
-            Write-Host "警告: 源文件不存在: $SourceFile" -ForegroundColor Yellow
+            Write-Host "Warning: Source file does not exist: $SourceFile" -ForegroundColor Yellow
             continue
         }
         
-        # 直接复制规范文件（覆盖已存在的文件）
+        # Direct copy (overwrite existing)
         try {
             Copy-Item -Path $SourceFile -Destination $TargetFile -Force
-            Write-Host "[INFO] 复制文件: $SourceFile -> $TargetFile" -ForegroundColor Green
+            Write-Host "[INFO] Copied file: $SourceFile -> $TargetFile" -ForegroundColor Green
         }
         catch {
-            Write-Host "错误: 无法复制文件 $SourceFile -> $TargetFile" -ForegroundColor Red
+            Write-Host "Error: Cannot copy file $SourceFile -> $TargetFile" -ForegroundColor Red
         }
     }
     
-    # 特殊处理 trae_rules.md -> project_rules.md
+    # Special handling for trae_rules.md -> project_rules.md
     $SourceFile = Join-Path $ScriptDir $TraeRulesFile
     $TargetFile = Join-Path $RulesDir "project_rules.md"
     
-    # 检查源文件是否存在
+    # Check if source file exists
     if (-not (Test-Path $SourceFile)) {
-        Write-Host "警告: 源文件不存在: $SourceFile" -ForegroundColor Yellow
+        Write-Host "Warning: Source file does not exist: $SourceFile" -ForegroundColor Yellow
     }
     else {
-        # 检查目标文件是否存在
+        # Check if target file exists
         if (Test-Path $TargetFile) {
-            Write-Host "[INFO] 目标文件已存在，智能更新内容: $TargetFile" -ForegroundColor Yellow
+            Write-Host "[INFO] Target file exists, smart updating content: $TargetFile" -ForegroundColor Yellow
             try {
-                # 读取目标文件内容
+                # Read target file content
                 $targetContent = Get-Content -Path $TargetFile -Raw
                 $sourceContent = Get-Content -Path $SourceFile -Raw
                 
-                # 定义标记
+                # Define markers
                 $startMarker = "<!-- trae_rules.md start -->"
                 $endMarker = "<!-- trae_rules.md end -->"
                 
-                # 检查是否已存在标记
+                # Check if markers exist
                 if ($targetContent -match [regex]::Escape($startMarker) -and $targetContent -match [regex]::Escape($endMarker)) {
-                    # 替换标记之间的内容
+                    # Replace content between markers
                     $pattern = "(?s)$([regex]::Escape($startMarker)).*?$([regex]::Escape($endMarker))"
                     $newContent = $startMarker + "`n" + $sourceContent + "`n" + $endMarker
                     $targetContent = $targetContent -replace $pattern, $newContent
                     
                     Set-Content -Path $TargetFile -Value $targetContent
-                    Write-Host "[INFO] 已替换标记内容到 $TargetFile" -ForegroundColor Green
+                    Write-Host "[INFO] Replaced marked content in $TargetFile" -ForegroundColor Green
                 }
                 else {
-                    # 如果不存在标记，则追加内容
+                    # If markers don't exist, append content
                     Add-Content -Path $TargetFile -Value ""
-                    Add-Content -Path $TargetFile -Value "# 以下内容来自 trae_rules.md"
+                    Add-Content -Path $TargetFile -Value "# Content below from trae_rules.md"
                     Add-Content -Path $TargetFile -Value ""
                     Add-Content -Path $TargetFile -Value $startMarker
                     Add-Content -Path $TargetFile -Value $sourceContent
                     Add-Content -Path $TargetFile -Value $endMarker
-                    Write-Host "[INFO] 已追加内容到 $TargetFile" -ForegroundColor Green
+                    Write-Host "[INFO] Appended content to $TargetFile" -ForegroundColor Green
                 }
             }
             catch {
-                Write-Host "错误: 无法更新内容到 $TargetFile" -ForegroundColor Red
+                Write-Host "Error: Cannot update content in $TargetFile" -ForegroundColor Red
             }
         }
         else {
             try {
-                # 第一次复制时，添加标记
+                # First copy, add markers
                 $sourceContent = Get-Content -Path $SourceFile -Raw
                 $startMarker = "<!-- trae_rules.md start -->"
                 $endMarker = "<!-- trae_rules.md end -->"
                 $markedContent = $startMarker + "`n" + $sourceContent + "`n" + $endMarker
                 
                 Set-Content -Path $TargetFile -Value $markedContent
-                Write-Host "[INFO] 复制文件并添加标记: $SourceFile -> $TargetFile" -ForegroundColor Green
+                Write-Host "[INFO] Copied file and added markers: $SourceFile -> $TargetFile" -ForegroundColor Green
             }
             catch {
-                Write-Host "错误: 无法复制文件 $SourceFile -> $TargetFile" -ForegroundColor Red
+                Write-Host "Error: Cannot copy file $SourceFile -> $TargetFile" -ForegroundColor Red
             }
         }
     }
     
     Write-Host ""
-    Write-Host "完成: 所有规范文件已处理到项目路径 $Path" -ForegroundColor Green
+    Write-Host "Complete: All spec files processed to project path $Path" -ForegroundColor Green
 }
 
-# 处理 --all 参数
+# Process --all argument
 if ($All) {
-    Write-Host "[INFO] 检测到 --all 参数" -ForegroundColor Green
+    Write-Host "[INFO] Detected --all argument" -ForegroundColor Green
     
-    # 获取用户主目录
+    # Get user home directory
     $UserHome = $env:USERPROFILE
-    Write-Host "[INFO] 用户主目录: $UserHome" -ForegroundColor Yellow
+    Write-Host "[INFO] User home directory: $UserHome" -ForegroundColor Yellow
     
-    # 根据 --cn 参数选择目录
+    # Choose directory based on --cn argument
     if ($Cn) {
-        Write-Host "[INFO] 检测到 --cn 参数，使用 ~/.trae-cn 目录" -ForegroundColor Green
+        Write-Host "[INFO] Detected --cn argument, using ~/.trae-cn directory" -ForegroundColor Green
         $UserRulesDir = Join-Path $UserHome ".trae-cn"
     } else {
-        Write-Host "[INFO] 未检测到 --cn 参数，使用 ~/.trae 目录" -ForegroundColor Green
+        Write-Host "[INFO] No --cn argument detected, using ~/.trae directory" -ForegroundColor Green
         $UserRulesDir = Join-Path $UserHome ".trae"
     }
     if (-not (Test-Path $UserRulesDir)) {
         try {
             New-Item -ItemType Directory -Path $UserRulesDir -Force | Out-Null
-            Write-Host "[INFO] 创建目录: $UserRulesDir" -ForegroundColor Green
+            Write-Host "[INFO] Created directory: $UserRulesDir" -ForegroundColor Green
         }
         catch {
-            Write-Host "错误: 无法创建目录 $UserRulesDir" -ForegroundColor Red
+            Write-Host "Error: Cannot create directory $UserRulesDir" -ForegroundColor Red
             exit 1
         }
     }
     
-    # 处理三个规范文件（直接覆盖）
+    # Process three spec files (direct copy)
     foreach ($File in $SpecFiles) {
         $SourceFile = Join-Path $ScriptDir $File
         $TargetFile = Join-Path $UserRulesDir $File
         
-        # 检查源文件是否存在
+        # Check if source file exists
         if (-not (Test-Path $SourceFile)) {
-            Write-Host "警告: 源文件不存在: $SourceFile" -ForegroundColor Yellow
+            Write-Host "Warning: Source file does not exist: $SourceFile" -ForegroundColor Yellow
             continue
         }
         
-        # 直接复制规范文件（覆盖已存在的文件）
+        # Direct copy (overwrite existing)
         try {
             Copy-Item -Path $SourceFile -Destination $TargetFile -Force
-            Write-Host "[INFO] 复制文件: $SourceFile -> $TargetFile" -ForegroundColor Green
+            Write-Host "[INFO] Copied file: $SourceFile -> $TargetFile" -ForegroundColor Green
         }
         catch {
-            Write-Host "错误: 无法复制文件 $SourceFile -> $TargetFile" -ForegroundColor Red
+            Write-Host "Error: Cannot copy file $SourceFile -> $TargetFile" -ForegroundColor Red
         }
     }
     
-    # 特殊处理 trae_rules.md -> user_rules.md
+    # Special handling for trae_rules.md -> user_rules.md
     $SourceFile = Join-Path $ScriptDir $TraeRulesFile
     $TargetFile = Join-Path $UserRulesDir "user_rules.md"
     
-    # 检查源文件是否存在
+    # Check if source file exists
     if (-not (Test-Path $SourceFile)) {
-        Write-Host "警告: 源文件不存在: $SourceFile" -ForegroundColor Yellow
+        Write-Host "Warning: Source file does not exist: $SourceFile" -ForegroundColor Yellow
     }
     else {
-        # 检查目标文件是否存在
+        # Check if target file exists
         if (Test-Path $TargetFile) {
-            Write-Host "[INFO] 目标文件已存在，智能更新内容: $TargetFile" -ForegroundColor Yellow
+            Write-Host "[INFO] Target file exists, smart updating content: $TargetFile" -ForegroundColor Yellow
             try {
-                # 读取目标文件内容
+                # Read target file content
                 $targetContent = Get-Content -Path $TargetFile -Raw
                 $sourceContent = Get-Content -Path $SourceFile -Raw
                 
-                # 定义标记
+                # Define markers
                 $startMarker = "<!-- trae_rules.md start -->"
                 $endMarker = "<!-- trae_rules.md end -->"
                 
-                # 检查是否已存在标记
+                # Check if markers exist
                 if ($targetContent -match [regex]::Escape($startMarker) -and $targetContent -match [regex]::Escape($endMarker)) {
-                    # 替换标记之间的内容
+                    # Replace content between markers
                     $pattern = "(?s)$([regex]::Escape($startMarker)).*?$([regex]::Escape($endMarker))"
                     $newContent = $startMarker + "`n" + $sourceContent + "`n" + $endMarker
                     $targetContent = $targetContent -replace $pattern, $newContent
                     
                     Set-Content -Path $TargetFile -Value $targetContent
-                    Write-Host "[INFO] 已替换标记内容到 $TargetFile" -ForegroundColor Green
+                    Write-Host "[INFO] Replaced marked content in $TargetFile" -ForegroundColor Green
                 }
                 else {
-                    # 如果不存在标记，则追加内容
+                    # If markers don't exist, append content
                     Add-Content -Path $TargetFile -Value ""
-                    Add-Content -Path $TargetFile -Value "# 以下内容来自 trae_rules.md"
+                    Add-Content -Path $TargetFile -Value "# Content below from trae_rules.md"
                     Add-Content -Path $TargetFile -Value ""
                     Add-Content -Path $TargetFile -Value $startMarker
                     Add-Content -Path $TargetFile -Value $sourceContent
                     Add-Content -Path $TargetFile -Value $endMarker
-                    Write-Host "[INFO] 已追加内容到 $TargetFile" -ForegroundColor Green
+                    Write-Host "[INFO] Appended content to $TargetFile" -ForegroundColor Green
                 }
             }
             catch {
-                Write-Host "错误: 无法更新内容到 $TargetFile" -ForegroundColor Red
+                Write-Host "Error: Cannot update content in $TargetFile" -ForegroundColor Red
             }
         }
         else {
             try {
-                # 第一次复制时，添加标记
+                # First copy, add markers
                 $sourceContent = Get-Content -Path $SourceFile -Raw
                 $startMarker = "<!-- trae_rules.md start -->"
                 $endMarker = "<!-- trae_rules.md end -->"
                 $markedContent = $startMarker + "`n" + $sourceContent + "`n" + $endMarker
                 
                 Set-Content -Path $TargetFile -Value $markedContent
-                Write-Host "[INFO] 复制文件并添加标记: $SourceFile -> $TargetFile" -ForegroundColor Green
+                Write-Host "[INFO] Copied file and added markers: $SourceFile -> $TargetFile" -ForegroundColor Green
             }
             catch {
-                Write-Host "错误: 无法复制文件 $SourceFile -> $TargetFile" -ForegroundColor Red
+                Write-Host "Error: Cannot copy file $SourceFile -> $TargetFile" -ForegroundColor Red
             }
         }
     }
     
     Write-Host ""
-    Write-Host "完成: 所有规范文件已处理到用户目录 $UserRulesDir" -ForegroundColor Green
+    Write-Host "Complete: All spec files processed to user directory $UserRulesDir" -ForegroundColor Green
 }
 
 Write-Host ""
-Write-Host "trae_spec.ps1 脚本执行完成！" -ForegroundColor Green
+Write-Host "trae_spec.ps1 script execution complete!" -ForegroundColor Green

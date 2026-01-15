@@ -16,6 +16,7 @@ NC='\033[0m' # No Color
 PATH_ARG=""
 ALL=false
 CN=false
+SKILL=false
 
 # ==========================================
 # 辅助函数
@@ -107,6 +108,10 @@ while [[ $# -gt 0 ]]; do
             CN=true
             shift
             ;;
+        --skill|-Skill)
+            SKILL=true
+            shift
+            ;;
         *)
             echo -e "${RED}错误: 未知参数 $1${NC}"
             echo ""
@@ -125,7 +130,7 @@ TRAE_RULES_FILE="trae_rules.md"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo -e "${GREEN}[INFO] trae_spec.sh 开始执行${NC}"
-echo -e "${YELLOW}[INFO] 参数: Path=${PATH_ARG}, All=${ALL}, Cn=${CN}${NC}"
+echo -e "${YELLOW}[INFO] 参数: Path=${PATH_ARG}, All=${ALL}, Cn=${CN}, Skill=${SKILL}${NC}"
 echo -e "${YELLOW}[INFO] 当前目录: $PWD${NC}"
 
 # 检查参数
@@ -153,6 +158,43 @@ if [[ -n "$PATH_ARG" ]]; then
     if [[ ! -d "$PATH_ARG" ]]; then
         echo -e "${RED}错误: 项目路径不存在: $PATH_ARG${NC}"
         exit 1
+    fi
+
+    if [[ "$SKILL" == true ]]; then
+        echo -e "${GREEN}[INFO] 检测到 --skill 参数，将复制 SKILL.md${NC}"
+        
+        # 创建 .trae/skills/spec 目录
+        SKILL_DIR="$PATH_ARG/.trae/skills/spec"
+        if [[ ! -d "$SKILL_DIR" ]]; then
+            mkdir -p "$SKILL_DIR"
+            if [[ $? -eq 0 ]]; then
+                echo -e "${GREEN}[INFO] 创建目录: $SKILL_DIR${NC}"
+            else
+                echo -e "${RED}错误: 无法创建目录 $SKILL_DIR${NC}"
+                exit 1
+            fi
+        fi
+        
+        # 复制 SKILL.md
+        SOURCE_FILE="$SCRIPT_DIR/skills/TraeSpec/SKILL.md"
+        TARGET_FILE="$SKILL_DIR/SKILL.md"
+        
+        if [[ ! -f "$SOURCE_FILE" ]]; then
+            echo -e "${RED}错误: 源文件不存在: $SOURCE_FILE${NC}"
+            exit 1
+        fi
+        
+        cp "$SOURCE_FILE" "$TARGET_FILE"
+        if [[ $? -eq 0 ]]; then
+            echo -e "${GREEN}[INFO] 复制文件: $SOURCE_FILE -> $TARGET_FILE${NC}"
+        else
+            echo -e "${RED}错误: 无法复制文件 $SOURCE_FILE -> $TARGET_FILE${NC}"
+            exit 1
+        fi
+        
+        echo ""
+        echo -e "${GREEN}完成: SKILL.md 已处理到项目路径 $PATH_ARG${NC}"
+        exit 0
     fi
     
     # 创建 .trae/rules 目录
