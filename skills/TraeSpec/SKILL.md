@@ -16,17 +16,16 @@ version: 1.0.0
 
 收到一个spec 任务时，必须强制遵守spec规范按以下流程执行且每个流程必须等待用户确认：
 
-1. **第一**，必须先查找并深度理解 spec 开发规则。requirements_spec.md、design_spec.md、tasks_spec.md 这三个文件路径，在 .trae/ruels 目录下，或者在 ~/.trae/ruels 目录下，或者在~/.trae-cn/ruels 目录下。
+1. **第一**，必须先查找并深度理解 spec 开发规则。
 2. **第二**，新建目录 .trae_spec/{task_desc} 来存放文档 requirements.md、design.md、tasks.md。
-3. **第三**，必须先查看 requirements_spec.md 文件，强制严格遵守 requirements_spec.md 规范，生成 requirements.md。
-4. **第四**，必须先查看 design_spec.md 文件，强制严格遵守 design_spec.md 规范，根据 requirements.md 的内容 来生成 design.md。
-5. **第五**，必须先查看 tasks_spec.md 文件，强制严格遵守 tasks_spec.md 规范，根据 requirements.md、design.md 的内容 来生成 tasks.md。
+3. **第三**，必须先查看下面 "Requirements 文档规范"，强制严格遵守 "Requirements 文档规范"，生成 requirements.md。
+4. **第四**，必须先查看下面 "Design 文档规范"，强制严格遵守 "Design 文档规范"，根据 requirements.md 的内容 来生成 design.md。
+5. **第五**，必须先查看下面 "Tasks 文档规范"，强制严格遵守 "Tasks 文档规范"，根据 requirements.md、design.md 的内容 来生成 tasks.md。
 6. **第六**，开发过程中，必须根据 requirements.md、design.md、tasks.md 中的内容，来进行代码开发。
 7. **第七**，必须强制在完成所有 tasks.md 中的任务开发后，在 项目目录 doc 目录下生成一个开发文档。记录本次spec开发完成的相关开发信息及相关任务、代码文档。
 
 + spec 开发流程 必须严格等待用户确认，再进行下一步。
 + spec 开发流程 如果用户明确不需要确认，或者用户明确直接开发，就直接跳过确认步骤。
-+ spec 开发流程 禁止在 .trae_spec 的子目录下 创建 requirements_spec.md、design_spec.md、tasks_spec.md 这三个文件。
 
 ## 详细文档规范
 
@@ -358,6 +357,3 @@ tasks.md 文档必须严格遵循这里的文档结构规范。
 - 保持与 requirements.md 和 design.md 的同步
 - 及时更新任务状态和关联关系
 - 记录实施过程中的重要发现和决策
-
-## 辅助脚本说明
-项目中包含 `trae_spec.bat` 脚本，可用于初始化规范文件到 `.trae/rules` 目录。
