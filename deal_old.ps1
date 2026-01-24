@@ -23,7 +23,7 @@ function Write-Color {
 
 # Get script directory
 $ScriptDir = $PSScriptRoot
-$OldRulesFile = Join-Path $ScriptDir "trae_rules_old.md"
+$OldRulesFile = Join-Path $ScriptDir "rules\trae_rules_old.md"
 
 if (-not (Test-Path $OldRulesFile)) {
     Write-Color "Error: $OldRulesFile not found" Red

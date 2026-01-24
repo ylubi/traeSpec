@@ -12,7 +12,7 @@ WHITE='\033[1;37m'
 NC='\033[0m' # No Color
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-OLD_RULES_FILE="$SCRIPT_DIR/trae_rules_old.md"
+OLD_RULES_FILE="$SCRIPT_DIR/rules/trae_rules_old.md"
 
 if [ ! -f "$OLD_RULES_FILE" ]; then
     echo -e "${RED}Error: $OLD_RULES_FILE not found${NC}"

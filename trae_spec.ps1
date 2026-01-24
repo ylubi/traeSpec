@@ -133,7 +133,7 @@ if ($Path) {
     
     # Process three spec files (direct copy)
     foreach ($File in $SpecFiles) {
-        $SourceFile = Join-Path $ScriptDir $File
+        $SourceFile = Join-Path $ScriptDir "rules\$File"
         $TargetFile = Join-Path $RulesDir $File
         
         # Check if source file exists
@@ -153,7 +153,7 @@ if ($Path) {
     }
     
     # Special handling for trae_rules.md -> project_rules.md
-    $SourceFile = Join-Path $ScriptDir $TraeRulesFile
+    $SourceFile = Join-Path $ScriptDir "rules\$TraeRulesFile"
     $TargetFile = Join-Path $RulesDir "project_rules.md"
     
     # Check if source file exists
@@ -248,7 +248,7 @@ if ($All) {
     
     # Process three spec files (direct copy)
     foreach ($File in $SpecFiles) {
-        $SourceFile = Join-Path $ScriptDir $File
+        $SourceFile = Join-Path $ScriptDir "rules\$File"
         $TargetFile = Join-Path $UserRulesDir $File
         
         # Check if source file exists
@@ -268,7 +268,7 @@ if ($All) {
     }
     
     # Special handling for trae_rules.md -> user_rules.md
-    $SourceFile = Join-Path $ScriptDir $TraeRulesFile
+    $SourceFile = Join-Path $ScriptDir "rules\$TraeRulesFile"
     $TargetFile = Join-Path $UserRulesDir "user_rules.md"
     
     # Check if source file exists

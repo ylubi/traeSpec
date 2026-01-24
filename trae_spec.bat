@@ -157,7 +157,7 @@ if defined ProjectPath (
     
     REM Process spec files (copy directly)
     for %%f in (!SpecFiles!) do (
-        set "SourceFile=!ScriptDir!\%%f"
+        set "SourceFile=!ScriptDir!\rules\%%f"
         set "TargetFile=!RulesDir!\%%f"
         
         REM Check if source file exists
@@ -174,7 +174,7 @@ if defined ProjectPath (
     )
     
     REM Special handling for trae_rules.md -> project_rules.md
-    set "SourceFile=!ScriptDir!\!TraeRulesFile!"
+    set "SourceFile=!ScriptDir!\rules\!TraeRulesFile!"
     set "TargetFile=!RulesDir!\project_rules.md"
     
     if not exist "!SourceFile!" (
@@ -216,7 +216,7 @@ if "!All!"=="true" (
     
     REM Process spec files (copy directly)
     for %%f in (!SpecFiles!) do (
-        set "SourceFile=!ScriptDir!\%%f"
+        set "SourceFile=!ScriptDir!\rules\%%f"
         set "TargetFile=!UserRulesDir!\%%f"
         
         REM Check if source file exists
@@ -233,7 +233,7 @@ if "!All!"=="true" (
     )
     
     REM Special handling for trae_rules.md -> user_rules.md
-    set "SourceFile=!ScriptDir!\!TraeRulesFile!"
+    set "SourceFile=!ScriptDir!\rules\!TraeRulesFile!"
     set "TargetFile=!UserRulesDir!\user_rules.md"
     
     if not exist "!SourceFile!" (

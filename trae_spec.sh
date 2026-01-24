@@ -211,7 +211,7 @@ if [[ -n "$PATH_ARG" ]]; then
     
     # 处理三个规范文件（直接覆盖）
     for FILE in "${SPEC_FILES[@]}"; do
-        SOURCE_FILE="$SCRIPT_DIR/$FILE"
+        SOURCE_FILE="$SCRIPT_DIR/rules/$FILE"
         TARGET_FILE="$RULES_DIR/$FILE"
         
         # 检查源文件是否存在
@@ -230,7 +230,7 @@ if [[ -n "$PATH_ARG" ]]; then
     done
     
     # 特殊处理 trae_rules.md -> project_rules.md
-    SOURCE_FILE="$SCRIPT_DIR/$TRAE_RULES_FILE"
+    SOURCE_FILE="$SCRIPT_DIR/rules/$TRAE_RULES_FILE"
     TARGET_FILE="$RULES_DIR/project_rules.md"
     
     # 检查源文件是否存在
@@ -273,7 +273,7 @@ if [[ "$ALL" == true ]]; then
     
     # 处理三个规范文件（直接覆盖）
     for FILE in "${SPEC_FILES[@]}"; do
-        SOURCE_FILE="$SCRIPT_DIR/$FILE"
+        SOURCE_FILE="$SCRIPT_DIR/rules/$FILE"
         TARGET_FILE="$USER_RULES_DIR/$FILE"
         
         # 检查源文件是否存在
@@ -292,7 +292,7 @@ if [[ "$ALL" == true ]]; then
     done
     
     # 特殊处理 trae_rules.md -> user_rules.md
-    SOURCE_FILE="$SCRIPT_DIR/$TRAE_RULES_FILE"
+    SOURCE_FILE="$SCRIPT_DIR/rules/$TRAE_RULES_FILE"
     TARGET_FILE="$USER_RULES_DIR/user_rules.md"
     
     # 检查源文件是否存在

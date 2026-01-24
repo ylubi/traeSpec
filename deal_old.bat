@@ -8,7 +8,7 @@ set "PATH=%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem;%PATH%"
 :: Get script directory
 set "SCRIPT_DIR=%~dp0"
 set "SELF=%~f0"
-set "OLD_RULES_FILE=%SCRIPT_DIR%trae_rules_old.md"
+set "OLD_RULES_FILE=%SCRIPT_DIR%rules\trae_rules_old.md"
 
 if not exist "%OLD_RULES_FILE%" (
     echo [ERROR] trae_rules_old.md not found.
