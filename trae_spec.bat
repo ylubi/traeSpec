@@ -92,7 +92,7 @@ if defined ProjectPath if "!All!"=="true" (
 )
 
 REM Define spec files
-set "SpecFiles=requirements_spec.md design_spec.md tasks_spec.md"
+set "SpecFiles=requirements_spec.md design_spec.md tasks_spec.md knowledges_spec.md"
 set "TraeRulesFile=trae_rules.md"
 
 REM Process --path argument

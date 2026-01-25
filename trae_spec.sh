@@ -125,7 +125,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # 定义需要处理的文件列表
-SPEC_FILES=("requirements_spec.md" "design_spec.md" "tasks_spec.md")
+SPEC_FILES=("requirements_spec.md" "design_spec.md" "tasks_spec.md" "knowledges_spec.md")
 TRAE_RULES_FILE="trae_rules.md"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

@@ -44,7 +44,7 @@ for ($i = 0; $i -lt $args.Count; $i++) {
 }
 
 # Define list of files to process
-$SpecFiles = @("requirements_spec.md", "design_spec.md", "tasks_spec.md")
+$SpecFiles = @("requirements_spec.md", "design_spec.md", "tasks_spec.md", "knowledges_spec.md")
 $TraeRulesFile = "trae_rules.md"
 $ScriptDir = "c:\work\tools\traeSpec"
 
